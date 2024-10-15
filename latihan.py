@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from typing import Tuple
-
 
 class Model:
+    
     def __init__(self) -> None:
+        """Initiate a super class that will be a parent class"""
         # initiate random constants a and b
         self.weights = np.random.rand(4)
         self.x_mean = 0
@@ -13,7 +13,15 @@ class Model:
         self.y_mean = 0
         self.y_std = 1
 
-    def predict(self, x: float) -> float:
+    def predict(self, x: np.ndarray) -> float:
+        """Predict input data to become prediction data
+
+        Args:
+            x (np.ndarray): Input features
+
+        Returns:
+            float: The result will have float datatype
+        """
         # the input x should normalized first,
         x_norm = (x - self.x_mean) / self.x_std
         # do the prediction
@@ -21,13 +29,22 @@ class Model:
         # and the output y should be de-normalized
         return y_pred_norm * self.y_std + self.y_mean
     
-    def calculate_y(self, x: float) -> None:
+    def calculate_y(self, x: np.ndarray) -> float:
+        """This methode will be executed with a sub class"""
         raise NotImplementedError
     
-    def calculate_gradient(self, x: float, y: float, y_pred: float) -> None:
+    def calculate_gradient(self, x: np.ndarray, y: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+        """This methode will be executed with a sub class"""
         raise NotImplementedError
     
-    def gradient_descent(self, x: float, y: float, learning_rate: float) -> float:
+    def gradient_descent(self, x: np.ndarray, y: np.ndarray, learning_rate: float) -> None:
+        """Calculate the gradient from input data
+
+        Args:
+            x (np.ndarray): Input features, normalized for better result
+            y (np.ndarray): Target output values, normalized for better result
+            learning_rate (float): Step size to update the model
+        """
         # First, normalize all input/output so that we get better training
         # normalized_value = (original_value - mean) / standard_deviation
         x = (x - self.x_mean) / self.x_std
@@ -37,7 +54,15 @@ class Model:
         d_weights = self.calculate_gradient(x, y, y_pred)
         self.weights -= learning_rate * d_weights
 
-    def train(self, x_data: float, y_data: float, max_epochs: int = 50, learning_rate: float =0.1) -> Tuple[float, float]:
+    def train(self, x_data: np.ndarray, y_data: np.ndarray, max_epochs: int = 50, learning_rate: float = 0.1) -> None:
+        """Training and looping the data
+
+        Args:
+            x_data (np.ndarray): Input features
+            y_data (np.ndarray): Target output values
+            max_epochs (int, optional): How many loops were performed. Defaults to 50.
+            learning_rate (float, optional): Step size to update the model. Defaults to 0.1.
+        """
         print("Start training")
 
         # First let's calculate the mean and standard deviation for each
@@ -55,11 +80,29 @@ class Model:
     
 class LinearModel(Model):
   
-    def calculate_y(self, x) -> float:
+    def calculate_y(self, x: np.ndarray) -> float:
+        """Calculate y as a result from LinearModel
+
+        Args:
+            x (np.ndarray): Input features
+
+        Returns:
+            float: The result will have float datatype
+        """
         # Calculate the y = ax + b
         return self.weights[0] * x + self.weights[1]
 
-    def calculate_gradient(self, x, y, y_pred) -> float:
+    def calculate_gradient(self, x: np.ndarray, y: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+        """Calculate the gradient for each input
+
+        Args:
+            x (np.ndarray): Input features
+            y (np.ndarray): Target output values
+            y_pred (np.ndarray): Prediction values
+
+        Returns:
+            np.ndarray: The result will be formed as array
+        """
         # Calculate the gradient
         # dL/da = 2 * x * (pred - actual)
         # dL/db = 2 * (pred - actual)
@@ -70,11 +113,29 @@ class LinearModel(Model):
 
 class QuadraticModel(Model):
 
-    def calculate_y(self, x) -> float:
+    def calculate_y(self, x: np.ndarray) -> float:
+        """Calculate y as a result from LinearModel
+
+        Args:
+            x (np.ndarray): Input features
+
+        Returns:
+            float: The result will have float datatype
+        """
         # Calculate the y = ax^2 + bx + c
         return self.weights[0] * x**2 + self.weights[1] * x + self.weights[2]
 
-    def calculate_gradient(self, x, y, y_pred) -> float:
+    def calculate_gradient(self, x: np.ndarray, y: np.ndarray, y_pred: np.ndarray) -> np.ndarray:
+        """Calculate the gradient for each input
+
+        Args:
+            x (np.ndarray): Input features
+            y (np.ndarray): Target output values
+            y_pred (np.ndarray): Prediction values
+
+        Returns:
+            np.ndarray: The result will be formed as array
+        """
         # Calculate the gradient
         # dL/da = 2 * x^2 * (pred - actual)
         # dL/db = 2 * x * (pred - actual)
@@ -87,11 +148,29 @@ class QuadraticModel(Model):
 
 class CubicRegressionModel(Model):
 
-    def calculate_y(self, x) -> float:
+    def calculate_y(self, x: float) -> float:
+        """Calculate y as a result from LinearModel
+
+        Args:
+            x (np.ndarray): Input features
+
+        Returns:
+            float: The result will have float datatype
+        """
         # calculate the y = ax^3 + bx^2 + cx + d
         return self.weights[0] * x ** 3 + self.weights[1] * x ** 2 + self.weights[2] * x + self.weights[3]
 
-    def calculate_gradient(self, x, y, y_pred) -> float:
+    def calculate_gradient(self, x: float, y: float, y_pred: float) -> np.ndarray:
+        """Calculate the gradient for each input
+
+        Args:
+            x (np.ndarray): Input features
+            y (np.ndarray): Target output values
+            y_pred (np.ndarray): Prediction values
+
+        Returns:
+            np.ndarray: The result will be formed as array
+        """
         # calculate the gradient
         # dL/da = 2 * x^3 * (pred - actual)
         # dL/db = 2 * x^2 * (pred - actual)
@@ -105,7 +184,7 @@ class CubicRegressionModel(Model):
         return d_weights  
      
 
-def load_data(data_path):
+def load_data(data_path: str) -> np.ndarray:
     # load the data as numpy
     data = np.genfromtxt(data_path, delimiter=",")
     # the second column of the data is useless
@@ -115,7 +194,7 @@ def load_data(data_path):
     return data
 
 
-def create_plot(model, x, y, forecast_year):
+def create_plot(model: Model, x: np.ndarray, y: np.ndarray, forecast_year: int) -> None:
     # Make model prediction for historical data
     y_pred = model.predict(x)
     # We can calculate the error (MAE) since we have the actual y
