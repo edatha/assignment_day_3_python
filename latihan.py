@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from typing import Tuple
+
 
 class Model:
-    def __init__(self):
+    def __init__(self) -> None:
         # initiate random constants a and b
         self.weights = np.random.rand(4)
         self.x_mean = 0
@@ -11,7 +13,7 @@ class Model:
         self.y_mean = 0
         self.y_std = 1
 
-    def predict(self, x):
+    def predict(self, x: float) -> float:
         # the input x should normalized first,
         x_norm = (x - self.x_mean) / self.x_std
         # do the prediction
@@ -19,13 +21,13 @@ class Model:
         # and the output y should be de-normalized
         return y_pred_norm * self.y_std + self.y_mean
     
-    def calculate_y(self, x):
+    def calculate_y(self, x: float) -> None:
         raise NotImplementedError
     
-    def calculate_gradient(self, x, y, y_pred):
+    def calculate_gradient(self, x: float, y: float, y_pred: float) -> None:
         raise NotImplementedError
     
-    def gradient_descent(self, x, y, learning_rate):
+    def gradient_descent(self, x: float, y: float, learning_rate: float) -> float:
         # First, normalize all input/output so that we get better training
         # normalized_value = (original_value - mean) / standard_deviation
         x = (x - self.x_mean) / self.x_std
@@ -35,7 +37,7 @@ class Model:
         d_weights = self.calculate_gradient(x, y, y_pred)
         self.weights -= learning_rate * d_weights
 
-    def train(self, x_data, y_data, max_epochs=50, learning_rate=0.1):
+    def train(self, x_data: float, y_data: float, max_epochs: int = 50, learning_rate: float =0.1) -> Tuple[float, float]:
         print("Start training")
 
         # First let's calculate the mean and standard deviation for each
@@ -53,11 +55,11 @@ class Model:
     
 class LinearModel(Model):
   
-    def calculate_y(self, x):
+    def calculate_y(self, x) -> float:
         # Calculate the y = ax + b
         return self.weights[0] * x + self.weights[1]
 
-    def calculate_gradient(self, x, y, y_pred):
+    def calculate_gradient(self, x, y, y_pred) -> float:
         # Calculate the gradient
         # dL/da = 2 * x * (pred - actual)
         # dL/db = 2 * (pred - actual)
@@ -68,11 +70,11 @@ class LinearModel(Model):
 
 class QuadraticModel(Model):
 
-    def calculate_y(self, x):
+    def calculate_y(self, x) -> float:
         # Calculate the y = ax^2 + bx + c
         return self.weights[0] * x**2 + self.weights[1] * x + self.weights[2]
 
-    def calculate_gradient(self, x, y, y_pred):
+    def calculate_gradient(self, x, y, y_pred) -> float:
         # Calculate the gradient
         # dL/da = 2 * x^2 * (pred - actual)
         # dL/db = 2 * x * (pred - actual)
@@ -85,11 +87,11 @@ class QuadraticModel(Model):
 
 class CubicRegressionModel(Model):
 
-    def calculate_y(self, x):
+    def calculate_y(self, x) -> float:
         # calculate the y = ax^3 + bx^2 + cx + d
         return self.weights[0] * x ** 3 + self.weights[1] * x ** 2 + self.weights[2] * x + self.weights[3]
 
-    def calculate_gradient(self, x, y, y_pred):
+    def calculate_gradient(self, x, y, y_pred) -> float:
         # calculate the gradient
         # dL/da = 2 * x^3 * (pred - actual)
         # dL/db = 2 * x^2 * (pred - actual)
